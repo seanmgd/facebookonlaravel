@@ -2122,6 +2122,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -2132,7 +2133,8 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      posts: null
+      posts: [],
+      loading: true
     };
   },
   mounted: function mounted() {
@@ -2140,8 +2142,10 @@ __webpack_require__.r(__webpack_exports__);
 
     axios.get('api/posts').then(function (res) {
       _this.posts = res.data;
+      _this.loading = false;
     })["catch"](function (error) {
       console.log('Unable to fetch posts');
+      _this.loading = false;
     });
   }
 });
@@ -38074,9 +38078,11 @@ var render = function() {
     [
       _c("NewPost"),
       _vm._v(" "),
-      _vm._l(_vm.posts.data, function(post) {
-        return _c("Post", { key: post.data.post_id, attrs: { post: post } })
-      })
+      _vm.loading
+        ? _c("p", [_vm._v("Loading posts...")])
+        : _vm._l(_vm.posts.data, function(post) {
+            return _c("Post", { key: post.data.post_id, attrs: { post: post } })
+          })
     ],
     2
   )
