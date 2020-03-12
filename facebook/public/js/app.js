@@ -2076,7 +2076,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  name: "Post"
+  name: "Post",
+  props: ['post']
 });
 
 /***/ }),
@@ -2128,6 +2129,20 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     NewPost: _components_NewPost__WEBPACK_IMPORTED_MODULE_0__["default"],
     Post: _components_Post__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  data: function data() {
+    return {
+      posts: null
+    };
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    axios.get('api/posts').then(function (res) {
+      _this.posts = res.data;
+    })["catch"](function (error) {
+      console.log('Unable to fetch posts');
+    });
   }
 });
 
@@ -37840,9 +37855,36 @@ var render = function() {
     "div",
     { staticClass: "bg-white rounded shadow w-2/3 mt-6 overflow-hidden" },
     [
-      _vm._m(0),
+      _c("div", { staticClass: "flex flex-col p-4" }, [
+        _c("div", { staticClass: "flex items-center" }, [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("div", { staticClass: "ml-6" }, [
+            _c("div", { staticClass: "text-sm font-bold" }, [
+              _vm._v(
+                _vm._s(_vm.post.data.attributes.posted_by.data.attributes.name)
+              )
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "text-sm text-gray-600" }, [
+              _vm._v(_vm._s(_vm.post.data.attributes.posted_at))
+            ])
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "mt-4" }, [
+          _c("p", [_vm._v(_vm._s(_vm.post.data.attributes.body))])
+        ])
+      ]),
       _vm._v(" "),
-      _vm._m(1),
+      _vm.post.data.attributes.image
+        ? _c("div", { staticClass: "w-full" }, [
+            _c("img", {
+              staticClass: "w-full",
+              attrs: { src: "post.data.attributes.image", alt: "post image" }
+            })
+          ])
+        : _vm._e(),
       _vm._v(" "),
       _c(
         "div",
@@ -37871,7 +37913,7 @@ var render = function() {
             _c("p", [_vm._v("Paulo and 137 others")])
           ]),
           _vm._v(" "),
-          _vm._m(2)
+          _vm._m(1)
         ]
       ),
       _vm._v(" "),
@@ -37948,44 +37990,13 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "flex flex-col p-4" }, [
-      _c("div", { staticClass: "flex items-center" }, [
-        _c("div", { staticClass: "w-8" }, [
-          _c("img", {
-            staticClass: "w-8 h-8 object-cover rounded-full",
-            attrs: {
-              src:
-                "https://cdn.pixabay.com/photo/2014/07/09/10/04/man-388104_960_720.jpg",
-              alt: "profile image for user"
-            }
-          })
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "ml-6" }, [
-          _c("div", { staticClass: "text-sm font-bold" }, [
-            _vm._v("Name User")
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "text-sm text-gray-600" }, [
-            _vm._v("12 mins")
-          ])
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "mt-4" }, [_c("p", [_vm._v("Laravel vie.")])])
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "w-full" }, [
+    return _c("div", { staticClass: "w-8" }, [
       _c("img", {
-        staticClass: "w-full",
+        staticClass: "w-8 h-8 object-cover rounded-full",
         attrs: {
           src:
-            "https://images.pexels.com/photos/132037/pexels-photo-132037.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-          alt: "post image"
+            "https://cdn.pixabay.com/photo/2014/07/09/10/04/man-388104_960_720.jpg",
+          alt: "profile image for user"
         }
       })
     ])
@@ -38060,8 +38071,14 @@ var render = function() {
   return _c(
     "div",
     { staticClass: "flex flex-col items-center py-4" },
-    [_c("NewPost"), _vm._v(" "), _c("Post")],
-    1
+    [
+      _c("NewPost"),
+      _vm._v(" "),
+      _vm._l(_vm.posts.data, function(post) {
+        return _c("Post", { key: post.data.post_id, attrs: { post: post } })
+      })
+    ],
+    2
   )
 }
 var staticRenderFns = []
@@ -53197,11 +53214,6 @@ var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
 /***/ (function(module, exports, __webpack_require__) {
 
 window._ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
-/**
- * We'll load jQuery and the Bootstrap jQuery plugin which provides support
- * for JavaScript based Bootstrap features such as modals and tabs. This
- * code may be modified to fit the specific needs of your application.
- */
 
 try {
   window.Popper = __webpack_require__(/*! popper.js */ "./node_modules/popper.js/dist/esm/popper.js")["default"];
@@ -53209,21 +53221,9 @@ try {
 
   __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.js");
 } catch (e) {}
-/**
- * We'll load the axios HTTP library which allows us to easily issue requests
- * to our Laravel back-end. This library automatically handles sending the
- * CSRF token as a header based on the value of the "XSRF" token cookie.
- */
-
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-/**
- * Echo exposes an expressive API for subscribing to channels and listening
- * for events that are broadcast by Laravel. Echo and event broadcasting
- * allows your team to easily build robust real-time web applications.
- */
-// import Echo from 'laravel-echo';
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'; // import Echo from 'laravel-echo';
 // window.Pusher = require('pusher-js');
 // window.Echo = new Echo({
 //     broadcaster: 'pusher',
