@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\UserNotFOundException;
+use App\Exceptions\UserNotFoundException;
 use App\Friend;
 use App\User;
 use App\Http\Resources\Friend as FriendResource;
@@ -39,11 +39,10 @@ class FriendRequestController extends Controller
     public function store()
     {
         $data = request()->validate([
-            'friend_id' => '',
+            'friend_id' => 'required',
         ]);
 
         try {
-
             User::findOrFail($data['friend_id'])
                 ->friends()->attach(auth()->user());
         } catch (ModelNotFoundException $e) {
@@ -52,8 +51,8 @@ class FriendRequestController extends Controller
 
         return new FriendResource(
             Friend::where('user_id', auth()->user()->id)
-            ->where('friend_id', $data['friend_id'])
-            ->first()
+                ->where('friend_id', $data['friend_id'])
+                ->first()
         );
 
     }
@@ -61,7 +60,7 @@ class FriendRequestController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function show()
@@ -72,7 +71,7 @@ class FriendRequestController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -83,8 +82,8 @@ class FriendRequestController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param \Illuminate\Http\Request $request
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -95,7 +94,7 @@ class FriendRequestController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int  $id
+     * @param int $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
