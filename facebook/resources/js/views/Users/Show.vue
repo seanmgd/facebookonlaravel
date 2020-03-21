@@ -2,15 +2,21 @@
     <div class="flex flex-col items-center">
         <div class="relative mb-8">
             <div class="w-100 h-64 overflow-hidden z-10">
-                <img src="" alt="user background image" class="object-cover w-full">
+                <img src="https://images.unsplash.com/photo-1584565169019-f1f4ca64a3e7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1036&q=80" alt="user background image" class="object-cover w-full">
             </div>
             <div class="absolute flex items-center bottom-0 left-0 -mb8 ml-12 z-20">
                 <div class="w-32">
                     <img src="https://cdn.pixabay.com/photo/2014/07/09/10/04/man-388104_960_720.jpg"
-                         alt="profile image for user" class="object-cover w-32 h-32 border-4 border-gray-200 rounded-full shadow-lg">
+                         alt="profile image for user"
+                         class="object-cover w-32 h-32 border-4 border-gray-200 rounded-full shadow-lg">
 
                 </div>
                 <p class="ml-4 text-gray-100 text-2xl">{{ user.data.attributes.name }}</p>
+            </div>
+
+
+            <div class="absolute flex items-center bottom-0 right-0 mb4 mr-12 z-20">
+                <button class="py-1 px-3 bg-grey-400 rounded">Add Friend</button>
             </div>
         </div>
 
@@ -24,6 +30,7 @@
 
 <script>
     import Post from '../../components/Post';
+    import { mapGetters } from 'vuex';
 
     export default {
         name: "Show",
@@ -34,23 +41,12 @@
 
         data: () => {
             return {
-                user: null,
                 posts: null,
-                userLoading: true,
                 postLoading: true,
             }
         },
         mounted() {
-            axios.get('/api/users/' + this.$route.params.userId)
-                .then(res => {
-                    this.user = res.data;
-                })
-                .catch(error => {
-                    console.log('Unable to fetch the user from the server')
-                })
-                .finally(() => {
-                    this.userLoading = false
-                });
+            this.$store.dispatch('fetchUser', this.$route.params.userId);
 
             axios.get('/api/users/' + this.$route.params.userId + '/posts')
                 .then(res => {
@@ -62,6 +58,12 @@
                 .finally(() => {
                     this.postLoading = false
                 });
+        },
+
+        computed: {
+            ...mapGetters({
+                user: 'user'
+            }),
         }
     }
 </script>
