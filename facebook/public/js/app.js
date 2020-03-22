@@ -2136,6 +2136,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Post",
   props: ['post']
@@ -38574,7 +38576,7 @@ var render = function() {
               }
             ],
             staticClass:
-              "w-full pl-4 h-8 bg-gray-200 rounded-full focus:outline-none focus:shadow-outline text-sm",
+              "w-full pl-4 h-8 bg-gray-200 rounded-full focus:outline-none focus:outline-none text-sm",
             attrs: { type: "text", name: "body", placeholder: "Add a post" },
             domProps: { value: _vm.postMessage },
             on: {
@@ -38592,7 +38594,8 @@ var render = function() {
               ? _c(
                   "button",
                   {
-                    staticClass: "bg-gray-200 ml-2 px-3 py-1 rounded-full",
+                    staticClass:
+                      "bg-gray-200 ml-2 px-3 py-1 rounded-full focus:outline-none",
                     on: {
                       click: function($event) {
                         return _vm.$store.dispatch("postMessage")
@@ -38738,7 +38741,13 @@ var render = function() {
               ]
             ),
             _vm._v(" "),
-            _c("p", [_vm._v("Paulo and 137 others")])
+            _c("p", { staticClass: "ml-1" }, [
+              _vm._v(
+                " " +
+                  _vm._s(_vm.post.data.attributes.likes.like_count) +
+                  " likes"
+              )
+            ])
           ]),
           _vm._v(" "),
           _vm._m(1)
@@ -38753,7 +38762,20 @@ var render = function() {
             "button",
             {
               staticClass:
-                "flex justify-center py-2 rounded-lg text-sm text-gray-700 w-full hover:bg-gray-200"
+                "flex justify-center py-2 rounded-lg text-sm w-full focus:outline-none",
+              class: [
+                _vm.post.data.attributes.likes.user_likes_post
+                  ? "bg-blue-500 text-white"
+                  : ""
+              ],
+              on: {
+                click: function($event) {
+                  return _vm.$store.dispatch("likePost", {
+                    postId: _vm.post.data.post_id,
+                    postKey: _vm.$vnode.key
+                  })
+                }
+              }
             },
             [
               _c(
@@ -38904,8 +38926,8 @@ var render = function() {
       _vm._v(" "),
       _vm.newsStatus.postsStatus === "loading"
         ? _c("p", [_vm._v("Loading posts...")])
-        : _vm._l(_vm.posts.data, function(post) {
-            return _c("Post", { key: post.data.post_id, attrs: { post: post } })
+        : _vm._l(_vm.posts.data, function(post, postKey) {
+            return _c("Post", { key: postKey, attrs: { post: post } })
           })
     ],
     2
@@ -55788,6 +55810,16 @@ var actions = {
       commit('pushPost', res.data);
       commit('updateMessage', '');
     })["catch"](function (error) {});
+  },
+  likePost: function likePost(_ref3, data) {
+    var commit = _ref3.commit,
+        state = _ref3.state;
+    axios.post('/api/posts/' + data.postId + '/like').then(function (res) {
+      commit('pushLikes', {
+        likes: res.data,
+        postKey: data.postKey
+      });
+    })["catch"](function (error) {});
   }
 };
 var mutations = {
@@ -55802,6 +55834,9 @@ var mutations = {
   },
   pushPost: function pushPost(state, post) {
     state.newsPosts.data.unshift(post);
+  },
+  pushLikes: function pushLikes(state, data) {
+    state.newsPosts.data[data.postKey].data.attributes.likes = data.likes;
   }
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
