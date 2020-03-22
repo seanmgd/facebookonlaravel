@@ -1,7 +1,6 @@
 const state = {
     user: null,
     userStatus: null,
-    friendButtonText: null,
 };
 
 const getters = {
@@ -9,10 +8,14 @@ const getters = {
         return state.user;
     },
     friendship: state => {
-      return state.user.data.attributes.friendship;
+        return state.user.data.attributes.friendship;
     },
-    friendButtonText: state => {
-        return state.friendButtonText;
+    friendButtonText: (state, getters, rootState) => {
+        if (getters.friendship === null) {
+            return 'Add Friend';
+        } else if (getters.friendship.data.attributes.confirmed_at === null) {
+            return 'Pending Friend Request';
+        }
     }
 };
 
@@ -24,7 +27,6 @@ const actions = {
             .then(res => {
                 commit('setUser', res.data);
                 commit('setUserStatus', 'success');
-                dispatch('setFriendButton');
             })
             .catch(error => {
                 commit('setUserStatus', 'error');
@@ -33,26 +35,21 @@ const actions = {
     sendFriendRequest({commit, state}, friend_id) {
         commit('setButtonText', 'Loading');
 
-        axios.post('/api/friend-request', { 'friend_id': friend_id})
+        axios.post('/api/friend-request', {'friend_id': friend_id})
             .then(res => {
-                commit('setButtonText', 'Pending Friend Request');
+                commit('setUserFriendship', res.data);
             })
             .catch(error => {
-                commit('setButtonText', 'Add Friend');
             });
     },
-    setFriendButton({commit, getters}) {
-        if (getters.friendship === null) {
-            commit('setButtonText', 'Add Friend');
-        } else if (getters.friendship.data.attributes.confirmed_at === null) {
-            commit('setButtonText', 'Pending Friend Request');
-        }
-    }
 };
 
 const mutations = {
     setUser(state, user) {
         state.user = user;
+    },
+    setUserFriendship(state, friendship) {
+        state.user.data.attributes.friendship = friendship;
     },
     setUserStatus(state, status) {
         state.userStatus = status;
