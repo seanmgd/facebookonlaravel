@@ -10,7 +10,7 @@
             <div class="flex-1 flex mx-4">
                 <input v-model="postMessage"
                        type="text" name="body"
-                       class="w-full pl-4 h-8 bg-gray-200 rounded-full focus:outline-none focus:outline-none text-sm"
+                       class="w-full pl-4 h-8 bg-gray-200 rounded-full focus:outline-none text-sm"
                        placeholder="Add a post">
                 <transition name="fade">
                     <button
