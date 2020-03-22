@@ -1,8 +1,10 @@
 <template>
-    <div class="flex flex-col items-center">
+    <div class="flex flex-col items-center" v-if="status.user === 'success' && user">
         <div class="relative mb-8">
             <div class="w-100 h-64 overflow-hidden z-10">
-                <img src="https://images.unsplash.com/photo-1584565169019-f1f4ca64a3e7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1036&q=80" alt="user background image" class="object-cover w-full">
+                <img
+                    src="https://images.unsplash.com/photo-1584565169019-f1f4ca64a3e7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1036&q=80"
+                    alt="user background image" class="object-cover w-full">
             </div>
             <div class="absolute flex items-center bottom-0 left-0 -mb8 ml-12 z-20">
                 <div class="w-32">
@@ -18,7 +20,7 @@
             <div class="absolute flex items-center bottom-0 right-0 mb-4 mr-12 z-20">
                 <button v-if="friendButtonText && friendButtonText !== 'Accept'"
                         class="py-1 px-3 bg-gray-400 rounded"
-                @click="$store.dispatch('sendFriendRequest', $route.params.userId)">
+                        @click="$store.dispatch('sendFriendRequest', $route.params.userId)">
                     {{ friendButtonText }}
                 </button>
                 <button v-if="friendButtonText && friendButtonText === 'Accept'"
@@ -35,16 +37,17 @@
         </div>
 
 
-        <p v-if="postLoading">Loading posts...</p>
-        <Post v-else v-for="post in posts.data" :key="post.data.post_id" :post="post"/>
+        <div v-if="status.posts === 'loading'">Loading posts...</div>
 
-        <p v-if="! postLoading && posts.data.length<1"> No posts found</p>
+        <div v-else-if="posts.length < 1"> No posts found</div>
+
+        <Post v-else v-for="post in posts.data" :key="post.data.post_id" :post="post"/>
     </div>
 </template>
 
 <script>
     import Post from '../../components/Post';
-    import { mapGetters } from 'vuex';
+    import {mapGetters} from 'vuex';
 
     export default {
         name: "Show",
@@ -53,30 +56,16 @@
             Post
         },
 
-        data: () => {
-            return {
-                posts: null,
-                postLoading: true,
-            }
-        },
         mounted() {
             this.$store.dispatch('fetchUser', this.$route.params.userId);
-
-            axios.get('/api/users/' + this.$route.params.userId + '/posts')
-                .then(res => {
-                    this.posts = res.data;
-                })
-                .catch(error => {
-                    console.log('Unable to fetch posts');
-                })
-                .finally(() => {
-                    this.postLoading = false
-                });
+            this.$store.dispatch('fetchUserPosts', this.$route.params.userId);
         },
 
         computed: {
             ...mapGetters({
                 user: 'user',
+                posts: 'posts',
+                status: 'status',
                 friendButtonText: 'friendButtonText',
             }),
         }
