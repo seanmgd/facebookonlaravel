@@ -40,11 +40,18 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function friends(): BelongsToMany {
+    public function friends(): BelongsToMany
+    {
         return $this->belongsToMany(User::class, 'friends', 'friend_id', 'user_id');
     }
 
-    public function posts(): HasMany {
+    public function posts(): HasMany
+    {
         return $this->hasMany(Post::class);
+    }
+
+    public function likedPosts(): BelongsToMany
+    {
+        return $this->belongsToMany(Post::class, 'likes', 'user_id', 'post_id');
     }
 }
