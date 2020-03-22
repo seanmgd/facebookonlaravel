@@ -56,7 +56,7 @@
         <div v-if="comments" class="border-t border-gray-300 p-4 pt-2">
             <div class="flex">
                 <input v-model="commentBody" type="text" name="comment"
-                       class="w-full pl-4 h-8 bg-gray-200 rounded focus:outline-none">
+                       class="w-full pl-4 h-8 bg-gray-200 rounded focus:outline-none" placeholder="Write your comment...">
                 <transition name="fade">
                     <button v-if="commentBody"
                             class="border-gray-600 bg-gray-200 ml-2 px-2 py-1 rounded focus:outline-none"
