@@ -22,15 +22,20 @@ const getters = {
         return state.user.data.attributes.friendship;
     },
     friendButtonText: (state, getters, rootState) => {
-        if (getters.friendship === null) {
-            return 'Add Friend';
-        } else if (getters.friendship.data.attributes.confirmed_at === null
 
-            && getters.friendship.data.attributes.friend_id !== rootState.User.user.data.user_id
-        ) {
-            return 'Pending Friend Request';
-        } else if (getters.friendship.data.attributes.confirmed_at !== null) {
+        if (rootState.User.user.data.user_id === state.user.data.user_id) {
             return '';
+        }else {
+            if (getters.friendship === null) {
+                return 'Add Friend';
+            } else if (getters.friendship.data.attributes.confirmed_at === null
+
+                && getters.friendship.data.attributes.friend_id !== rootState.User.user.data.user_id
+            ) {
+                return 'Pending Friend Request';
+            } else if (getters.friendship.data.attributes.confirmed_at !== null) {
+                return '';
+            }
         }
 
         return 'Accept';
@@ -62,7 +67,10 @@ const actions = {
                 commit('setPostsStatus', 'error');
             });
     },
-    sendFriendRequest({commit, state}, friend_id) {
+    sendFriendRequest({commit, getters}, friend_id) {
+        if (getters.friendButtonText !== 'Add Friend') {
+            return;
+        }
         axios.post('/api/friend-request', {'friend_id': friend_id})
             .then(res => {
                 commit('setUserFriendship', res.data);
