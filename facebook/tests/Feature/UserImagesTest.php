@@ -21,9 +21,9 @@ class UserImagesTest extends TestCase
         Storage::fake('public');
     }
 
-    public function test_images_can_be_uploaded(){
+    public function test_images_can_be_uploaded()
+    {
 
-        $this->withoutExceptionHandling();
         $this->actingAs($user = factory(User::class)->create(), 'api');
 
         $file = UploadedFile::fake()->image('user-image.jpg');
@@ -35,28 +35,63 @@ class UserImagesTest extends TestCase
             'location' => 'cover',
         ])->assertStatus(201);
 
-        Storage::disk('public')->assertExists('user-images/'.$file->hashName());
+        Storage::disk('public')->assertExists('user-images/' . $file->hashName());
         $userImage = UserImage::first();
-        $this->assertEquals('user-images/'.$file->hashName(), $userImage->path);
+        $this->assertEquals('user-images/' . $file->hashName(), $userImage->path);
         $this->assertEquals('850', $userImage->width);
         $this->assertEquals('300', $userImage->height);
         $this->assertEquals('cover', $userImage->location);
         $this->assertEquals($user->id, $userImage->user_id);
 
         $response->assertJson([
-           'data' => [
-               'types' => 'user-images',
-               'user_image_id' => $userImage->id,
-               'attributes' => [
-                   'path' => url($userImage->path),
-                   'width' => $userImage->width,
-                   'height' => $userImage->height,
-                   'location' => $userImage->location,
-               ]
-           ],
+            'data' => [
+                'type' => 'user-images',
+                'user_image_id' => $userImage->id,
+                'attributes' => [
+                    'path' => url($userImage->path),
+                    'width' => $userImage->width,
+                    'height' => $userImage->height,
+                    'location' => $userImage->location,
+                ]
+            ],
             'links' => [
-                'self' => url('/users/'.$user->id),
+                'self' => url('/users/' . $user->id),
             ]
         ]);
+    }
+
+    public function test_users_are_returned_with_their_images()
+    {
+        $this->withoutExceptionHandling();
+        $this->actingAs($user = factory(User::class)->create(), 'api');
+
+        $file = UploadedFile::fake()->image('user-image.jpg');
+
+        $this->post('/api/user-images', [
+            'image' => $file,
+            'width' => 850,
+            'height' => 300,
+            'location' => 'cover',
+        ])->assertStatus(201);
+
+        $response = $this->get('/api/users/' . $user->id);
+
+        $userImage = UserImage::first();
+        $response->assertJson([
+            'data' => [
+                'type' => 'users',
+                'user_id' => $user->id,
+                'attributes' => [
+                    'cover_image' => [
+                        'data' => [
+                            'type' => 'user-images',
+                            'user_image_id' => $userImage->id,
+                            'attributes' => []
+                        ]
+                    ]
+                ]
+            ],
+        ]);
+
     }
 }
