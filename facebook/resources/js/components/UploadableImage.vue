@@ -1,10 +1,10 @@
 <template>
     <div>
         <img
-            src="https://images.unsplash.com/photo-1584565169019-f1f4ca64a3e7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1036&q=80"
-            alt="user background image"
+            :src="imageObject.data.attributes.path"
+            :alt="alt"
             ref="userImage"
-            class="object-cover w-full">
+            :class="classes">
     </div>
 </template>
 
@@ -15,14 +15,18 @@
         name: "UploadableImage",
 
         props: [
+            'userImage',
             'imageWidth',
             'imageHeight',
             'location',
+            'classes',
+            'alt',
         ],
 
         data: () => {
             return {
                 dropzone: null,
+                uploadedImage: null,
             }
         },
 
@@ -45,9 +49,12 @@
                         'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content,
                     },
                     success:(e, res) => {
-                        alert('uploaded!');
+                        this.uploadedImage = res;
                     }
                 };
+            },
+            imageObject() {
+                return this.uploadedImage || this.userImage
             }
         }
     }
