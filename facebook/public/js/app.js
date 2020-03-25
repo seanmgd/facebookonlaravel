@@ -2009,6 +2009,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "Nav",
@@ -2030,6 +2032,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js");
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
 //
 //
 //
@@ -2066,9 +2076,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "NewPost",
-  computed: {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])({
+    authUser: 'authUser'
+  }), {
     postMessage: {
       get: function get() {
         return this.$store.getters.postMessage;
@@ -2077,7 +2090,7 @@ __webpack_require__.r(__webpack_exports__);
         this.$store.commit('updateMessage', postMessage);
       }, 300)
     }
-  }
+  })
 });
 
 /***/ }),
@@ -42492,7 +42505,8 @@ var render = function() {
                 staticClass: "w-8 h-8 object-cover rounded-full",
                 attrs: {
                   src:
-                    "https://cdn.pixabay.com/photo/2014/07/09/10/04/man-388104_960_720.jpg",
+                    _vm.authUser.data.attributes.profile_image.data.attributes
+                      .path,
                   alt: "profile image for user"
                 }
               })
@@ -42575,7 +42589,18 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "bg-white rounded shadow w-2/3 p-4 " }, [
     _c("div", { staticClass: "flex justify-between items-center" }, [
-      _vm._m(0),
+      _c("div", [
+        _c("div", { staticClass: "w-8" }, [
+          _c("img", {
+            staticClass: "w-8 h-8 object-cover rounded-full",
+            attrs: {
+              src:
+                _vm.authUser.data.attributes.profile_image.data.attributes.path,
+              alt: "profile image for user"
+            }
+          })
+        ])
+      ]),
       _vm._v(" "),
       _c(
         "div",
@@ -42657,25 +42682,7 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("div", { staticClass: "w-8" }, [
-        _c("img", {
-          staticClass: "w-8 h-8 object-cover rounded-full",
-          attrs: {
-            src:
-              "https://cdn.pixabay.com/photo/2014/07/09/10/04/man-388104_960_720.jpg",
-            alt: "profile image for user"
-          }
-        })
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -42703,7 +42710,17 @@ var render = function() {
     [
       _c("div", { staticClass: "flex flex-col p-4" }, [
         _c("div", { staticClass: "flex items-center" }, [
-          _vm._m(0),
+          _c("div", { staticClass: "w-8" }, [
+            _c("img", {
+              staticClass: "w-8 h-8 object-cover rounded-full",
+              attrs: {
+                src:
+                  _vm.post.data.attributes.posted_by.data.attributes
+                    .profile_image.data.attributes.path,
+                alt: "profile image for user"
+              }
+            })
+          ]),
           _vm._v(" "),
           _c("div", { staticClass: "ml-6" }, [
             _c("div", { staticClass: "text-sm font-bold" }, [
@@ -42766,12 +42783,23 @@ var render = function() {
           ]),
           _vm._v(" "),
           _c("div", [
-            _c("p", [
-              _vm._v(
-                _vm._s(_vm.post.data.attributes.comments.comment_count) +
-                  " comments"
-              )
-            ])
+            _c(
+              "p",
+              {
+                staticStyle: { cursor: "pointer" },
+                on: {
+                  click: function($event) {
+                    _vm.comments = !_vm.comments
+                  }
+                }
+              },
+              [
+                _vm._v(
+                  _vm._s(_vm.post.data.attributes.comments.comment_count) +
+                    " comments"
+                )
+              ]
+            )
           ])
         ]
       ),
@@ -42928,7 +42956,17 @@ var render = function() {
               _vm._v(" "),
               _vm._l(_vm.post.data.attributes.comments.data, function(comment) {
                 return _c("div", { staticClass: "flex my-4 items-center" }, [
-                  _vm._m(1, true),
+                  _c("div", { staticClass: "w-8" }, [
+                    _c("img", {
+                      staticClass: "w-8 h-8 object-cover rounded-full",
+                      attrs: {
+                        src:
+                          comment.data.attributes.commented_by.data.attributes
+                            .profile_image.data.attributes.path,
+                        alt: "profile image for user"
+                      }
+                    })
+                  ]),
                   _vm._v(" "),
                   _c("div", { staticClass: "ml-4 flex-1" }, [
                     _c(
@@ -42983,38 +43021,7 @@ var render = function() {
     ]
   )
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "w-8" }, [
-      _c("img", {
-        staticClass: "w-8 h-8 object-cover rounded-full",
-        attrs: {
-          src:
-            "https://cdn.pixabay.com/photo/2014/07/09/10/04/man-388104_960_720.jpg",
-          alt: "profile image for user"
-        }
-      })
-    ])
-  },
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "w-8" }, [
-      _c("img", {
-        staticClass: "w-8 h-8 object-cover rounded-full",
-        attrs: {
-          src:
-            "https://cdn.pixabay.com/photo/2014/07/09/10/04/man-388104_960_720.jpg",
-          alt: "profile image for user"
-        }
-      })
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
