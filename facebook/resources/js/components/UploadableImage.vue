@@ -4,7 +4,8 @@
             :src="userImage.data.attributes.path"
             :alt="alt"
             ref="userImage"
-            :class="classes">
+            :class="classes"
+        >
     </div>
 </template>
 

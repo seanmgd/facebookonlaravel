@@ -2257,6 +2257,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -43174,7 +43175,7 @@ var render = function() {
                 _c("UploadableImage", {
                   attrs: {
                     "image-width": "1500",
-                    "image-height": "300",
+                    "image-height": "500",
                     location: "cover",
                     "user-image": _vm.user.data.attributes.cover_image,
                     classes: "object-cover w-full",
@@ -43198,8 +43199,8 @@ var render = function() {
                   [
                     _c("UploadableImage", {
                       attrs: {
-                        "image-width": "1500",
-                        "image-height": "300",
+                        "image-width": "750",
+                        "image-height": "750",
                         location: "profile",
                         "user-image": _vm.user.data.attributes.profile_image,
                         classes:
