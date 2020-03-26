@@ -60111,6 +60111,7 @@ var actions = {
       body: state.postMessage
     }).then(function (res) {
       commit('pushPost', res.data);
+      commit('setPostsStatus', 'success');
       commit('updateMessage', '');
     })["catch"](function (error) {});
   },
