@@ -2240,6 +2240,13 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dropzone */ "./node_modules/dropzone/dist/dropzone.js");
 /* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dropzone__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -2251,19 +2258,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "UploadableImage",
   props: ['userImage', 'imageWidth', 'imageHeight', 'location', 'classes', 'alt'],
   data: function data() {
     return {
-      dropzone: null,
-      uploadedImage: null
+      dropzone: null
     };
   },
   mounted: function mounted() {
-    this.dropzone = new dropzone__WEBPACK_IMPORTED_MODULE_0___default.a(this.$refs.userImage, this.settings);
+    if (this.authUser.data.user_id.toString() === this.$route.params.userId) {
+      this.dropzone = new dropzone__WEBPACK_IMPORTED_MODULE_0___default.a(this.$refs.userImage, this.settings);
+    }
   },
-  computed: {
+  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])({
+    authUser: 'authUser'
+  }), {
     settings: function settings() {
       var _this = this;
 
@@ -2280,14 +2291,15 @@ __webpack_require__.r(__webpack_exports__);
           'X-CSRF-TOKEN': document.head.querySelector('meta[name=csrf-token]').content
         },
         success: function success(e, res) {
-          _this.uploadedImage = res;
+          _this.$store.dispatch('fetchAuthUser');
+
+          _this.$store.dispatch('fetchUser', _this.$route.params.userId);
+
+          _this.$store.dispatch('fetchUserPosts', _this.$route.params.userId);
         }
       };
-    },
-    imageObject: function imageObject() {
-      return this.uploadedImage || this.userImage;
     }
-  }
+  })
 });
 
 /***/ }),
@@ -43086,7 +43098,7 @@ var render = function() {
     _c("img", {
       ref: "userImage",
       class: _vm.classes,
-      attrs: { src: _vm.imageObject.data.attributes.path, alt: _vm.alt }
+      attrs: { src: _vm.userImage.data.attributes.path, alt: _vm.alt }
     })
   ])
 }
