@@ -66,7 +66,6 @@ class PostController extends Controller
         }
 
         $post = request()->user()->posts()->create([
-//            'path' => '/storage/'.$image, todo
             'body' => $data['body'],
             'image' => $image ?? null,
         ]);
