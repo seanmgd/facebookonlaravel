@@ -2,18 +2,17 @@
 
 namespace App;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Storage;
 use Laravel\Passport\HasApiTokens;
+use App\Traits\Aws;
 
 class User extends Authenticatable
 {
-    use Notifiable, HasApiTokens;
+    use Notifiable, HasApiTokens, Aws;
 
     /**
      * The attributes that are mass assignable.
@@ -62,30 +61,13 @@ class User extends Authenticatable
         return $this->hasMany(UserImage::class);
     }
 
-    public function uriS3($defaultName) {
-        $path = 'storage/user-images/' . $defaultName;
-        $s3_client = Storage::disk('s3')->getDriver()->getAdapter()->getClient();
-        $command = $s3_client->getCommand(
-            'GetObject',
-            [
-                'Bucket' => env('AWS_BUCKET'),
-                'Key' => $path,
-                'ResponseContentDisposition' => 'attachment;'
-            ]
-        );
-
-        $request = $s3_client->createPresignedRequest($command, '+5 minutes');
-
-        return (string)$request->getUri();
-    }
-
     public function coverImage(): HasOne
     {
         return $this->hasOne(UserImage::class)
             ->orderByDesc('id')
             ->where('location', 'cover')
             ->withDefault(function ($userImage) {
-                $userImage->path = $this->uriS3('default_cover.png');
+                $userImage->path = 'default_cover.png';
             });
 
     }
@@ -96,7 +78,7 @@ class User extends Authenticatable
             ->orderByDesc('id')
             ->where('location', 'profile')
             ->withDefault(function ($userImage) {
-                $userImage->path = $this->uriS3('default_pp.png');
+                $userImage->path = 'default_pp.png';
             });
     }
 }

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Resources\UserImage as UserImageResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
 
 class UserImageController extends Controller
 {
@@ -37,9 +36,6 @@ class UserImageController extends Controller
      */
     public function store()
     {
-
-        $disk = Storage::disk('s3');
-
         $data = request()->validate([
             'image' => '',
             'width' => '',
@@ -47,25 +43,12 @@ class UserImageController extends Controller
             'location' => '',
         ]);
 
-        //Save path to aws s3
+        $disk = Storage::disk('s3');
         $disk->put('storage/user-images', $data['image']);
-
-        $path = 'storage/user-images/' . $data['image']->hashName();
-        $s3_client = $disk->getDriver()->getAdapter()->getClient();
-        $command = $s3_client->getCommand(
-            'GetObject',
-            [
-                'Bucket' => env('AWS_BUCKET'),
-                'Key' => $path,
-                'ResponseContentDisposition' => 'attachment;'
-            ]
-        );
-
-        $request = $s3_client->createPresignedRequest($command, '+5 minutes');
 
         $userImage = auth()->user()->images()->create([
             //Save path string to database path column
-            'path' => (string)$request->getUri(),
+            'path' => $data['image']->hashName(),
             'width' => $data['width'],
             'height' => $data['height'],
             'location' => $data['location'],

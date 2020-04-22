@@ -8,7 +8,6 @@ use App\Http\Resources\PostCollection;
 use App\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
 
 class PostController extends Controller
 {
@@ -60,23 +59,8 @@ class PostController extends Controller
 
         if (isset($data['image'])) {
             $disk = Storage::disk('s3');
-
-            //Save path to aws s3
             $disk->put('storage/post-images', $data['image']);
-
-            $path = 'storage/post-images/' . $data['image']->hashName();
-            $s3_client = $disk->getDriver()->getAdapter()->getClient();
-            $command = $s3_client->getCommand(
-                'GetObject',
-                [
-                    'Bucket' => env('AWS_BUCKET'),
-                    'Key' => $path,
-                    'ResponseContentDisposition' => 'attachment;'
-                ]
-            );
-
-            $request = $s3_client->createPresignedRequest($command, '+5 minutes');
-            $image = (string)$request->getUri();
+            $image = $data['image']->hashName();
         }
 
         $post = request()->user()->posts()->create([

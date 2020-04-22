@@ -6,17 +6,22 @@ use App\Friend;
 use App\Http\Resources\Friend as FriendResource;
 use App\Http\Resources\UserImage as UserImageResource;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Traits\Aws;
 
 class User extends JsonResource
 {
+    use Aws;
+
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return array
      */
     public function toArray($request)
     {
+        $this->coverImage->path = $this->uriS3('user-images/' . $this->coverImage->path);
+        $this->profileImage->path = $this->uriS3('user-images/' . $this->profileImage->path);
         return [
             'data' => [
                 'type' => 'users',
@@ -29,7 +34,7 @@ class User extends JsonResource
                 ]
             ],
             'links' => [
-                'self' => url('/users/'.$this->id)
+                'self' => url('/users/' . $this->id)
             ]
         ];
     }
