@@ -42440,7 +42440,7 @@ var render = function() {
               _vm._v(" "),
               _c(
                 "div",
-                { staticClass: "overflow-x-hidden w-2/3" },
+                { staticClass: "overflow-x-hidden w-full" },
                 [_c("router-view", { key: _vm.$route.fullPath })],
                 1
               )
@@ -43157,24 +43157,9 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div")
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "w-1/3 bg-white p-4 border-r border-gray-400" },
-      [
-        _c("h2", { staticClass: "font-bold text-2xl tracking-tight" }, [
-          _vm._v("Home")
-        ])
-      ]
-    )
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -60616,8 +60601,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/sean/Documents/GitHub/laravelonfacebook/facebook/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /Users/sean/Documents/GitHub/laravelonfacebook/facebook/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /Users/sean/Documents/GitHub/laravelonfacebook/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /Users/sean/Documents/GitHub/laravelonfacebook/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
