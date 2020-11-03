@@ -7,6 +7,8 @@
             <div class="card">
                 <div class="card-header">{{ __('Login') }}</div>
 
+                <div class="text-center">
+                   <br> mail: test@test.com <br> password: test</div>
                 <div class="card-body">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
